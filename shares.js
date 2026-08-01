@@ -1,13 +1,13 @@
 window.vaultShares = {
     "eljincholagentefuerte": {
-        "title": "Para El Jincho",
-        "message": "Aquí tienes los temas.",
-        "accessType": 4, // <--- Importante: 3 entra directo sin pedir correo ni esperar
+        "title": "Hola Jincho",
+        "message": "Ademas del resto de mi trabajo te dejo este instrumental que romperias heavy, flow 50cent o MJ",
+        "accessType": 2, // <--- Importante: 3 entra directo sin pedir correo ni esperar
         "files": [
             { 
-                name: "Beat_Grave.wav", 
+                name: "Pa la gente fuerte.mp3", 
                 type: "audio", 
-                path: "@LUSARDI_VT/BEATS/POP/[Bruno Mars, Michael Jackson, Pop Funky Disco] 2Fine 92bpm fmin @lusardiint instagram.wav" 
+                path: "@Shares/Jincho1.mp3" 
             }
         ]
     }
