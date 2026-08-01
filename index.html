@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Vault</title>
+    <style>
+        :root {
+            --bg-color: #0d0d0f;
+            --window-bg: #1e1e1f;
+            --sidebar-bg: rgba(30, 30, 32, 0.75);
+            --content-bg: #161618;
+            --card-hover: rgba(255, 255, 255, 0.08);
+            --card-active: rgba(41, 151, 255, 0.2);
+            --text-main: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent: #0071e3;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(circle at 50% 20%, #1c1c24 0%, #0d0d0f 100%);
+        }
+
+        .minecraft-enchant-text {
+            font-size: 1.6rem;
+            font-weight: 500;
+            color: #d1d1d6;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(90deg, #d1d1d6 0%, #ffffff 50%, #d1d1d6 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: chalkSweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            letter-spacing: -0.3px;
+        }
+
+        @keyframes chalkSweep {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        #access-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 13, 15, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .access-box {
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .access-box input {
+            width: 100%;
+            max-width: 320px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .access-box input:focus {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04);
+        }
+
+        .access-box button {
+            width: 100%;
+            max-width: 320px;
+            padding: 12px;
+            background: #f5f5f7;
+            color: #0d0d0f;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .access-box button:hover {
+            background: #ffffff;
+        }
+
+        .access-box button:active {
+            transform: scale(0.98);
+        }
+
+        #finder-app {
+            display: none;
+            width: 88vw;
+            height: 82vh;
+            max-width: 1050px;
+            background: var(--window-bg);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.7);
+            flex-direction: column;
+            overflow: hidden;
+            animation: windowAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes windowAppear {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .window-header {
+            height: 42px;
+            background: linear-gradient(to bottom, #2c2c2e, #242426);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            position: relative;
+            user-select: none;
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; border: 0.5px solid rgba(0,0,0,0.2); }
+        .dot-yellow { background: #ffbd2e; border: 0.5px solid rgba(0,0,0,0.2); }
+        .dot-green { background: #27c93f; border: 0.5px solid rgba(0,0,0,0.2); }
+
+        .window-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.82rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .finder-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 210px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border);
+            padding: 16px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            letter-spacing: 0.6px;
+            padding-left: 8px;
+            font-weight: 600;
+        }
+
+        .sidebar-item {
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            font-weight: 400;
+        }
+
+        .main-content {
+            flex: 1;
+            background: var(--content-bg);
+            padding: 24px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            grid-auto-rows: max-content;
+            gap: 16px;
+            align-content: start;
+        }
+
+        .file-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 12px 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.1s;
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        .file-item:hover {
+            background: var(--card-hover);
+            border-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .file-item:active {
+            background: var(--card-active);
+        }
+
+        .file-icon {
+            width: 56px;
+            height: 56px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+        }
+
+        .file-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .file-name {
+            font-size: 0.78rem;
+            color: var(--text-main);
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.2;
+        }
+
+        .finder-footer {
+            height: 64px;
+            background: rgba(30, 30, 32, 0.9);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+        }
+
+        .player-info {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 420px;
+        }
+
+        audio {
+            height: 36px;
+            outline: none;
+            filter: invert(0.9) hue-rotate(180deg);
+        }
+
+        .loading-text {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="access-screen">
+        <div class="access-box">
+            <h1 class="minecraft-enchant-text">Tengo algo para ti</h1>
+            <form id="emailForm" action="https://formspree.io/f/xojpzykj" method="POST">
+                <input type="email" name="email" placeholder="Introduce tu correo..." required>
+                <button type="submit">Acceder</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="finder-app">
+        <div class="window-header">
+            <div class="window-dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div>
+            <div class="window-title" id="windowTitle">GitHub — @LUSARDI_VT Vault</div>
+        </div>
+
+        <div class="finder-body">
+            <div class="sidebar">
+                <div class="sidebar-title">Favoritos</div>
+                <div class="sidebar-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                    Beats & Loops
+                </div>
+            </div>
+
+            <div class="main-content" id="fileGrid">
+                <div class="loading-text" id="loadingText">Cargando directorio...</div>
+            </div>
+        </div>
+
+        <div class="finder-footer">
+            <div class="player-info" id="nowPlaying">Selecciona un beat para escuchar</div>
+            <audio id="audioPlayer" controls></audio>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE TU GITHUB (Modifica esto con tus datos exactos)
+        const GITHUB_USER = 'lusardiint'; // Ej: Lusardi
+        const REPO_NAME = 'LusardiVault'; // Ej: LusardiVault
+        const FOLDER_PATH = '@LUSARDI_VT';
+
+        const emailForm = document.getElementById('emailForm');
+        const accessScreen = document.getElementById('access-screen');
+        const finderApp = document.getElementById('finder-app');
+
+        const icons = {
+            audio: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="8" width="44" height="48" rx="8" fill="url(#audio_grad)"/>
+                <path d="M26 40V22L42 18V36" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="22" cy="40" r="6" fill="white"/>
+                <circle cx="38" cy="36" r="6" fill="white"/>
+                <defs>
+                    <linearGradient id="audio_grad" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#ff3b30"/><stop offset="1" stop-color="#c70000"/>
+                    </linearGradient>
+                </defs>
+            </svg>`,
+            zip: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="8" width="44" height="48" rx="8" fill="url(#zip_grad)"/>
+                <path d="M22 20H42V44H22V20Z" fill="white" fill-opacity="0.2"/>
+                <path d="M32 16V48M20 28H44" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                <defs>
+                    <linearGradient id="zip_grad" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#ff9500"/><stop offset="1" stop-color="#b86800"/>
+                    </linearGradient>
+                </defs>
+            </svg>`,
+            file: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="12" y="6" width="40" height="52" rx="6" fill="url(#file_grad)"/>
+                <path d="M36 6V18H48" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <defs>
+                    <linearGradient id="file_grad" x1="32" y1="6" x2="32" y2="58" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#8e8e93"/><stop offset="1" stop-color="#48484a"/>
+                    </linearGradient>
+                </defs>
+            </svg>`
+        };
+
+        emailForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(emailForm);
+
+            try {
+                await fetch(emailForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+            } catch (error) {}
+
+            accessScreen.style.opacity = '0';
+            setTimeout(() => {
+                accessScreen.style.display = 'none';
+                finderApp.style.display = 'flex';
+                fetchGitHubFolder();
+            }, 400);
+        });
+
+        async function fetchGitHubFolder() {
+            const fileGrid = document.getElementById('fileGrid');
+            fileGrid.innerHTML = '<div class="loading-text">Cargando beats...</div>';
+
+            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const files = await response.json();
+
+                fileGrid.innerHTML = '';
+
+                if (!Array.isArray(files) || files.length === 0) {
+                    fileGrid.innerHTML = '<div class="loading-text">La carpeta está vacía.</div>';
+                    return;
+                }
+
+                files.forEach(file => {
+                    let displayName = file.name.replace(/\.[^/.]+$/, "");
+                    let iconSvg = icons.file;
+                    let isAudio = file.name.toLowerCase().endsWith('.mp3') || file.name.toLowerCase().endsWith('.wav');
+                    let isZip = file.name.toLowerCase().endsWith('.zip');
+
+                    if (isAudio) {
+                        iconSvg = icons.audio;
+                    } else if (isZip) {
+                        iconSvg = icons.zip;
+                    }
+
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <div class="file-icon">${iconSvg}</div>
+                        <div class="file-name">${displayName}</div>
+                    `;
+
+                    fileItem.addEventListener('click', () => {
+                        if (isAudio) {
+                            loadAndPlayAudio(file.download_url, displayName);
+                        } else {
+                            window.open(file.download_url, '_blank');
+                        }
+                    });
+
+                    fileGrid.appendChild(fileItem);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                fileGrid.innerHTML = '<div class="loading-text">Error al conectar con GitHub.</div>';
+            }
+        }
+
+        function loadAndPlayAudio(audioUrl, title) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const nowPlaying = document.getElementById('nowPlaying');
+
+            nowPlaying.textContent = `Reproduciendo: ${title}`;
+            audioPlayer.src = audioUrl;
+            audioPlayer.play().catch(() => {});
+        }
+    </script>
+</body>
+</html>
