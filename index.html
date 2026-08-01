@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Private Vault</title>
-    <script src="shares.js"></script>
+    <script src="shares.js" defer></script>
     
     <style>
         :root {
@@ -141,6 +141,7 @@
             transition: all 0.2s;
             width: 100%;
             max-width: 320px;
+            display: none; /* Se activa mediante JS si la vista lo requiere */
         }
 
         .btn-reject:hover {
@@ -668,27 +669,29 @@
 
                 grid.innerHTML = '';
                 
-                shareData.files.forEach(file => {
-                    let iconSvg = icons.file;
-                    if(file.type === 'audio') iconSvg = icons.audio;
-                    if(file.type === 'zip') iconSvg = icons.zip;
-                    if(file.type === 'folder') iconSvg = icons.folder;
+                if (shareData.files && shareData.files.length > 0) {
+                    shareData.files.forEach(file => {
+                        let iconSvg = icons.file;
+                        if(file.type === 'audio') iconSvg = icons.audio;
+                        if(file.type === 'zip') iconSvg = icons.zip;
+                        if(file.type === 'folder') iconSvg = icons.folder;
 
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.innerHTML = `<div class="file-icon">${iconSvg}</div><div class="file-name">${file.name}</div>`;
-                    
-                    fileItem.addEventListener('click', () => {
-                        const directUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${file.path}`;
-                        if (file.type === 'audio') {
-                            loadAndPlayAudio(directUrl, file.name);
-                        } else {
-                            window.open(directUrl, '_blank');
-                        }
+                        const fileItem = document.createElement('div');
+                        fileItem.className = 'file-item';
+                        fileItem.innerHTML = `<div class="file-icon">${iconSvg}</div><div class="file-name">${file.name}</div>`;
+                        
+                        fileItem.addEventListener('click', () => {
+                            const directUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${file.path}`;
+                            if (file.type === 'audio') {
+                                loadAndPlayAudio(directUrl, file.name);
+                            } else {
+                                window.open(directUrl, '_blank');
+                            }
+                        });
+                        
+                        grid.appendChild(fileItem);
                     });
-                    
-                    grid.appendChild(fileItem);
-                });
+                }
                 
                 customSharePanel.style.display = 'flex';
 
@@ -697,18 +700,22 @@
                 if (accessType === 1) {
                     accessTitle.textContent = "Tengo algo para ti";
                     emailForm.style.display = 'block';
+                    rejectBtn.style.display = 'block';
 
                 } else if (accessType === 2) {
                     accessTitle.textContent = shareData.extraText || "Tengo algo para ti";
                     emailForm.style.display = 'block';
+                    rejectBtn.style.display = 'block';
 
                 } else if (accessType === 3) {
                     accessScreen.style.display = 'none';
                     finderApp.style.display = 'flex';
+                    rejectBtn.style.display = 'none';
                     navigateTo('@LUSARDI_VT');
 
                 } else if (accessType === 4) {
                     emailForm.style.display = 'none';
+                    rejectBtn.style.display = 'none';
                     accessTitle.textContent = shareData.welcomeText || shareData.title || "Bienvenido";
 
                     setTimeout(() => {
@@ -726,10 +733,10 @@
                     window.history.replaceState(null, null, window.location.pathname);
                 }
                 customSharePanel.style.display = 'none';
+                rejectBtn.style.display = 'none';
             }
         }
 
-        // ACCIÓN PARA RECHAZAR EL REGALO
         rejectBtn.addEventListener('click', () => {
             customSharePanel.style.display = 'none';
             accessScreen.style.opacity = '0';
