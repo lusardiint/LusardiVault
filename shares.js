@@ -9,7 +9,7 @@ window.vaultShares = {
         // 2: Preguntar correo con texto extra encima
         // 3: No preguntar correo (acceso directo)
         // 4: Animación de texto de bienvenida y luego directo
-        accessType: 4, 
+        accessType: 2, 
         
         // Texto extra para la Opción 2 (Opcional)
         extraText: "Introduce tu correo para desbloquear la sesión exclusive", 
