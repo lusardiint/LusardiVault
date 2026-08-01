@@ -396,10 +396,10 @@
 
         @keyframes shimmer { 100% { left: 100%; } }
 
-        /* --- ACTUALIZADO: WAVEFORM REAL SIMÉTRICO --- */
+        /* --- WAVEFORM REAL SIMÉTRICO --- */
         .ios-eq {
             display: none; 
-            align-items: center; /* Centrado para que crezca simétricamente arriba y abajo */
+            align-items: center;
             justify-content: space-between;
             gap: 3px;
             height: 16px;
@@ -411,10 +411,10 @@
             width: 3px;
             background-color: var(--text-main);
             border-radius: 2px;
-            height: 16px; /* Altura total base */
-            transform-origin: center; /* Simetría vertical total */
-            transform: scaleY(0.15); /* Escala en reposo */
-            transition: transform 0.05s ease-out; /* Suavizado para los saltos de frecuencia */
+            height: 16px;
+            transform-origin: center;
+            transform: scaleY(0.15);
+            transition: transform 0.05s ease-out;
         }
 
         .error-link {
@@ -578,7 +578,7 @@
             source.connect(analyser);
             analyser.connect(audioCtx.destination);
             
-            analyser.fftSize = 64; // Segmentos pequeños para extraer 5 barras sólidas
+            analyser.fftSize = 64;
             const bufferLength = analyser.frequencyBinCount;
             dataArray = new Uint8Array(bufferLength);
             isAudioContextInitialized = true;
@@ -588,12 +588,11 @@
 
         function renderFrame() {
             requestAnimationFrame(renderFrame);
-            if (!audioCtx || audioPlayer.paused) return; // Detener animación si pausa
+            if (!audioCtx || audioPlayer.paused) return;
 
             analyser.getByteFrequencyData(dataArray);
             const bars = document.querySelectorAll('.ios-eq .bar');
             
-            // Repartir las frecuencias entre las 5 barras
             const step = Math.floor(dataArray.length / 5);
             
             bars.forEach((bar, index) => {
@@ -602,7 +601,6 @@
                     sum += dataArray[(index * step) + i];
                 }
                 const avg = sum / step;
-                // Calculamos el valor base: 0.15 (mínimo) a 1.0 (máximo)
                 let scale = 0.15 + (avg / 255) * 0.85; 
                 bar.style.transform = `scaleY(${scale})`;
             });
@@ -679,23 +677,19 @@
                 const accessType = shareData.accessType || 1;
 
                 if (accessType === 1) {
-                    // Opción 1: Preguntar correo normal
                     accessTitle.textContent = "Tengo algo para ti";
                     emailForm.style.display = 'block';
 
                 } else if (accessType === 2) {
-                    // Opción 2: Correo con texto extra encima y reflejo
                     accessTitle.textContent = shareData.extraText || "Tengo algo para ti";
                     emailForm.style.display = 'block';
 
                 } else if (accessType === 3) {
-                    // Opción 3: No preguntar correo (Acceso directo)
                     accessScreen.style.display = 'none';
                     finderApp.style.display = 'flex';
                     navigateTo('@LUSARDI_VT');
 
                 } else if (accessType === 4) {
-                    // Opción 4: Animación bienvenida -> Fundido -> Directo
                     emailForm.style.display = 'none';
                     accessTitle.textContent = shareData.welcomeText || shareData.title || "Bienvenido";
 
@@ -746,8 +740,18 @@
 
             try {
                 const response = await fetch(apiUrl);
-                const items = await response.json();
 
+                // CONTROL DE SATURACIÓN / LÍMITE DE API
+                if (response.status === 403) {
+                    fileGrid.innerHTML = '<div class="loading-text" style="color: #ff3b30;">La web está temporalmente saturada (límite de la API de GitHub alcanzado). Vuelve a intentarlo en unos minutos.</div>';
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const items = await response.json();
                 fileGrid.innerHTML = '';
 
                 if (path !== '@LUSARDI_VT') {
@@ -803,7 +807,7 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                fileGrid.innerHTML = '<div class="loading-text">Error al conectar con GitHub.</div>';
+                fileGrid.innerHTML = '<div class="loading-text" style="color: #ff3b30;">Error al conectar con GitHub.</div>';
             }
         }
 
@@ -818,7 +822,6 @@
             loadingBar.classList.add('active');
             eqAnim.classList.remove('active');
             
-            // Reset barras manualmente a su tamaño inicial
             bars.forEach(bar => bar.style.transform = 'scaleY(0.15)');
             
             downloadBtn.href = audioUrl;
@@ -838,7 +841,6 @@
                     audioPlayer.play().catch(() => {});
                 };
                 
-                // EVENTOS DE REPRODUCCIÓN (ACTIVAN EL VISUALIZADOR REAL)
                 audioPlayer.onplay = () => {
                     eqAnim.classList.add('active');
                     if (!isAudioContextInitialized) {
@@ -849,11 +851,11 @@
                 };
                 
                 audioPlayer.onpause = () => {
-                    bars.forEach(bar => bar.style.transform = 'scaleY(0.15)'); // Reposo
+                    bars.forEach(bar => bar.style.transform = 'scaleY(0.15)');
                 };
                 
                 audioPlayer.onended = () => {
-                    bars.forEach(bar => bar.style.transform = 'scaleY(0.15)'); // Reposo
+                    bars.forEach(bar => bar.style.transform = 'scaleY(0.15)');
                     eqAnim.classList.remove('active');
                 };
 
