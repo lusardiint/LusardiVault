@@ -7,7 +7,7 @@ window.vaultShares = {
             { 
                 name: "Pa la gente fuerte.mp3", 
                 type: "audio", 
-                path: "@Shares/Jincho1.mp3" 
+                path: "Shares/Jincho01_92bpm_fmin.mp3" 
             }
         ]
     }
