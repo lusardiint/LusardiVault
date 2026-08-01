@@ -396,7 +396,6 @@
 
         @keyframes shimmer { 100% { left: 100%; } }
 
-        /* --- WAVEFORM REAL SIMÉTRICO --- */
         .ios-eq {
             display: none; 
             align-items: center;
@@ -415,13 +414,6 @@
             transform-origin: center;
             transform: scaleY(0.15);
             transition: transform 0.05s ease-out;
-        }
-
-        .error-link {
-            color: #ff3b30;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: 500;
         }
 
         .player-controls {
@@ -554,7 +546,6 @@
         const searchInput = document.getElementById('searchInput');
         const audioPlayer = document.getElementById('audioPlayer');
         
-        // Variables Web Audio API
         let audioCtx, analyser, dataArray, source;
         let isAudioContextInitialized = false;
 
@@ -566,7 +557,6 @@
             file: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="6" width="40" height="52" rx="6" fill="url(#file_grad)"/><path d="M36 6V18H48" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="file_grad" x1="32" y1="6" x2="32" y2="58" gradientUnits="userSpaceOnUse"><stop stop-color="#8e8e93"/><stop offset="1" stop-color="#48484a"/></linearGradient></defs></svg>`
         };
 
-        // INICIALIZAR VISUALIZADOR REAL DE AUDIO
         function initAudioVisualizer() {
             if (isAudioContextInitialized) return;
             
@@ -673,7 +663,6 @@
                 
                 panel.style.display = 'flex';
 
-                // --- MANEJO DE OPCIONES DE ACCESO (accessType) ---
                 const accessType = shareData.accessType || 1;
 
                 if (accessType === 1) {
@@ -715,16 +704,22 @@
             e.preventDefault();
             const formData = new FormData(emailForm);
 
-            try {
-                await fetch(emailForm.action, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
-            } catch (error) {}
-
             accessScreen.style.opacity = '0';
             setTimeout(() => {
                 accessScreen.style.display = 'none';
                 finderApp.style.display = 'flex';
                 navigateTo('@LUSARDI_VT');
             }, 400);
+
+            try {
+                await fetch(emailForm.action, { 
+                    method: 'POST', 
+                    body: formData, 
+                    headers: { 'Accept': 'application/json' } 
+                });
+            } catch (error) {
+                console.error('Error enviando formulario:', error);
+            }
         });
 
         async function navigateTo(path) {
@@ -741,7 +736,6 @@
             try {
                 const response = await fetch(apiUrl);
 
-                // CONTROL DE SATURACIÓN / LÍMITE DE API
                 if (response.status === 403) {
                     fileGrid.innerHTML = '<div class="loading-text" style="color: #ff3b30;">La web está temporalmente saturada (límite de la API de GitHub alcanzado). Vuelve a intentarlo en unos minutos.</div>';
                     return;
