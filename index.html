@@ -476,7 +476,7 @@
 
     <div id="access-screen">
         <div class="access-box">
-            <h1 class="minecraft-enchant-text">Tengo algo para ti</h1>
+            <h1 class="minecraft-enchant-text" id="accessTitle">Tengo algo para ti</h1>
             <form id="emailForm" action="https://formspree.io/f/xojpzykj" method="POST">
                 <input type="email" name="email" placeholder="Introduce tu correo..." required>
                 <button type="submit">Acceder</button>
@@ -629,58 +629,90 @@
             });
         });
 
-        // NUEVA REGLA: SI EL HASH NO EXISTE, LLEVAR A PÁGINA NORMAL
         function checkCustomShare() {
             const hashId = window.location.hash.replace('#', '');
             const panel = document.getElementById('customSharePanel');
+            const accessTitle = document.getElementById('accessTitle');
 
-            if (hashId) {
-                if (window.vaultShares && window.vaultShares[hashId]) {
-                    const shareData = window.vaultShares[hashId];
-                    const grid = document.getElementById('customShareGrid');
-                    const title = document.getElementById('customShareTitle');
-                    const msg = document.getElementById('customShareMessage');
-                    
-                    if (shareData.title) title.textContent = shareData.title;
-                    
-                    if (shareData.message) {
-                        msg.textContent = shareData.message;
-                        msg.style.display = 'block';
-                    } else {
-                        msg.style.display = 'none';
-                    }
+            if (hashId && window.vaultShares && window.vaultShares[hashId]) {
+                const shareData = window.vaultShares[hashId];
+                const grid = document.getElementById('customShareGrid');
+                const title = document.getElementById('customShareTitle');
+                const msg = document.getElementById('customShareMessage');
+                
+                if (shareData.title) title.textContent = shareData.title;
+                
+                if (shareData.message) {
+                    msg.textContent = shareData.message;
+                    msg.style.display = 'block';
+                } else {
+                    msg.style.display = 'none';
+                }
 
-                    grid.innerHTML = '';
-                    
-                    shareData.files.forEach(file => {
-                        let iconSvg = icons.file;
-                        if(file.type === 'audio') iconSvg = icons.audio;
-                        if(file.type === 'zip') iconSvg = icons.zip;
-                        if(file.type === 'folder') iconSvg = icons.folder;
+                grid.innerHTML = '';
+                
+                shareData.files.forEach(file => {
+                    let iconSvg = icons.file;
+                    if(file.type === 'audio') iconSvg = icons.audio;
+                    if(file.type === 'zip') iconSvg = icons.zip;
+                    if(file.type === 'folder') iconSvg = icons.folder;
 
-                        const fileItem = document.createElement('div');
-                        fileItem.className = 'file-item';
-                        fileItem.innerHTML = `<div class="file-icon">${iconSvg}</div><div class="file-name">${file.name}</div>`;
-                        
-                        fileItem.addEventListener('click', () => {
-                            const directUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${file.path}`;
-                            if (file.type === 'audio') {
-                                loadAndPlayAudio(directUrl, file.name);
-                            } else {
-                                window.open(directUrl, '_blank');
-                            }
-                        });
-                        
-                        grid.appendChild(fileItem);
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `<div class="file-icon">${iconSvg}</div><div class="file-name">${file.name}</div>`;
+                    
+                    fileItem.addEventListener('click', () => {
+                        const directUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${file.path}`;
+                        if (file.type === 'audio') {
+                            loadAndPlayAudio(directUrl, file.name);
+                        } else {
+                            window.open(directUrl, '_blank');
+                        }
                     });
                     
-                    panel.style.display = 'flex';
-                } else {
-                    // EL HASH NO EXISTE EN shares.js -> Eliminar hash de URL y ocultar panel
-                    window.history.replaceState(null, null, window.location.pathname);
-                    panel.style.display = 'none';
+                    grid.appendChild(fileItem);
+                });
+                
+                panel.style.display = 'flex';
+
+                // --- MANEJO DE OPCIONES DE ACCESO (accessType) ---
+                const accessType = shareData.accessType || 1;
+
+                if (accessType === 1) {
+                    // Opción 1: Preguntar correo normal
+                    accessTitle.textContent = "Tengo algo para ti";
+                    emailForm.style.display = 'block';
+
+                } else if (accessType === 2) {
+                    // Opción 2: Correo con texto extra encima y reflejo
+                    accessTitle.textContent = shareData.extraText || "Tengo algo para ti";
+                    emailForm.style.display = 'block';
+
+                } else if (accessType === 3) {
+                    // Opción 3: No preguntar correo (Acceso directo)
+                    accessScreen.style.display = 'none';
+                    finderApp.style.display = 'flex';
+                    navigateTo('@LUSARDI_VT');
+
+                } else if (accessType === 4) {
+                    // Opción 4: Animación bienvenida -> Fundido -> Directo
+                    emailForm.style.display = 'none';
+                    accessTitle.textContent = shareData.welcomeText || shareData.title || "Bienvenido";
+
+                    setTimeout(() => {
+                        accessScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            accessScreen.style.display = 'none';
+                            finderApp.style.display = 'flex';
+                            navigateTo('@LUSARDI_VT');
+                        }, 500);
+                    }, 2200);
                 }
+
             } else {
+                if (hashId) {
+                    window.history.replaceState(null, null, window.location.pathname);
+                }
                 panel.style.display = 'none';
             }
         }
@@ -698,7 +730,6 @@
                 accessScreen.style.display = 'none';
                 finderApp.style.display = 'flex';
                 navigateTo('@LUSARDI_VT');
-                checkCustomShare();
             }, 400);
         });
 
@@ -832,6 +863,10 @@
                 trackTitle.innerHTML = `Error cargando archivo.`;
             }
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            checkCustomShare();
+        });
     </script>
 </body>
 </html>
