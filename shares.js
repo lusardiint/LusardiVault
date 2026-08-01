@@ -4,10 +4,10 @@ window.vaultShares = {
         "message": "Aquí tienes los temas.",
         "accessType": 4, // <--- Importante: 3 entra directo sin pedir correo ni esperar
         "files": [
-            {
-                "name": "NombreDelBeat",
-                "type": "audio",
-                "path": "@LUSARDI_VT/tu_carpeta/tema.mp3"
+            { 
+                name: "Beat_Grave.wav", 
+                type: "audio", 
+                path: "@LUSARDI_VT/BEATS/POP/[Bruno Mars, Michael Jackson, Pop Funky Disco] 2Fine 92bpm fmin @lusardiint instagram.wav" 
             }
         ]
     }
