@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Private Vault</title>
-    <script src="shares.js"></script>
-<script src="shares.js" defer></script>
+    <script src="shares.js" defer></script>
     
     <style>
         :root {
@@ -83,7 +82,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 24px;
+            gap: 16px;
+        }
+
+        .access-box form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
         }
 
         .access-box input {
@@ -106,7 +113,7 @@
             box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04);
         }
 
-        .access-box button {
+        .btn-primary {
             width: 100%;
             max-width: 320px;
             padding: 12px;
@@ -120,8 +127,27 @@
             transition: transform 0.1s, background 0.2s;
         }
 
-        .access-box button:hover { background: #ffffff; }
-        .access-box button:active { transform: scale(0.98); }
+        .btn-primary:hover { background: #ffffff; }
+        .btn-primary:active { transform: scale(0.98); }
+
+        .btn-reject {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .btn-reject:hover {
+            color: #ff3b30;
+            border-color: rgba(255, 59, 48, 0.3);
+            background: rgba(255, 59, 48, 0.05);
+        }
 
         #finder-app {
             display: none;
@@ -472,8 +498,9 @@
             <h1 class="minecraft-enchant-text" id="accessTitle">Tengo algo para ti</h1>
             <form id="emailForm" action="https://formspree.io/f/xojpzykj" method="POST">
                 <input type="email" name="email" placeholder="Introduce tu correo..." required>
-                <button type="submit">Acceder</button>
+                <button type="submit" class="btn-primary">Acceder</button>
             </form>
+            <button id="rejectBtn" class="btn-reject" type="button">Rechazar el regalo</button>
         </div>
     </div>
 
@@ -546,7 +573,9 @@
         const finderApp = document.getElementById('finder-app');
         const searchInput = document.getElementById('searchInput');
         const audioPlayer = document.getElementById('audioPlayer');
-        
+        const rejectBtn = document.getElementById('rejectBtn');
+        const customSharePanel = document.getElementById('customSharePanel');
+
         let audioCtx, analyser, dataArray, source;
         let isAudioContextInitialized = false;
 
@@ -620,7 +649,6 @@
 
         function checkCustomShare() {
             const hashId = window.location.hash.replace('#', '');
-            const panel = document.getElementById('customSharePanel');
             const accessTitle = document.getElementById('accessTitle');
 
             if (hashId && window.vaultShares && window.vaultShares[hashId]) {
@@ -662,7 +690,7 @@
                     grid.appendChild(fileItem);
                 });
                 
-                panel.style.display = 'flex';
+                customSharePanel.style.display = 'flex';
 
                 const accessType = shareData.accessType || 1;
 
@@ -697,9 +725,20 @@
                 if (hashId) {
                     window.history.replaceState(null, null, window.location.pathname);
                 }
-                panel.style.display = 'none';
+                customSharePanel.style.display = 'none';
             }
         }
+
+        // ACCIÓN PARA RECHAZAR EL REGALO
+        rejectBtn.addEventListener('click', () => {
+            customSharePanel.style.display = 'none';
+            accessScreen.style.opacity = '0';
+            setTimeout(() => {
+                accessScreen.style.display = 'none';
+                finderApp.style.display = 'flex';
+                navigateTo('@LUSARDI_VT');
+            }, 400);
+        });
 
         emailForm.addEventListener('submit', async function(e) {
             e.preventDefault();
