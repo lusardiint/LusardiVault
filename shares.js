@@ -24,6 +24,13 @@ window.vaultShares = {
                 path: "Shares/Jincho01_92bpm_fmin.mp3" 
             }
         ]
+    },
+
+    "arval_mp3": {
+        "title": "Hola Arval",
+        "message": "Aqui si eres artista, te mando un enlace custom donde aparece aqui los beats que yo quiera que aparezcan etc...",
+        "accessType": 4, // <--- Importante: 3 entra directo sin pedir correo ni esperar
+        ]
     }
 
 };

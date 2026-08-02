@@ -148,18 +148,19 @@
 
         .btn-reject {
             background: transparent;
-            color: rgba(255, 255, 255, 0.45);
+            color: rgba(255, 255, 255, 0.4);
             border: none;
             padding: 6px 12px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: color 0.2s ease;
             width: auto;
             display: none; 
+	margin-top: -29px;
         }
 
         .btn-reject:hover {
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255, 230, 230, 0.3);
             background: transparent;
             border-color: transparent;
         }
@@ -517,7 +518,7 @@
                 <input type="email" name="email" placeholder="Introduce tu correo..." required autofocus>
                 <button type="submit" class="btn-primary" id="submitBtn">Aceptar regalo ↗</button>
             </form>
-            <button id="rejectBtn" class="btn-reject" type="button">Rechazar el regalo</button>
+            <button id="rejectBtn" class="btn-reject" type="button">Rechazar el regalo ↙</button>
         </div>
     </div>
 
