@@ -607,7 +607,44 @@
         let isAudioContextInitialized = false;
 
         const icons = {
-            folder: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 16C6 13.7909 7.79086 12 10 12H24.382C25.4768 12 26.5313 12.4344 27.3137 13.2168L31.7868 17.6899C32.5692 18.4723 33.6237 18.9067 34.7185 18.9067H54C56.2091 18.9067 58 20.6976 58 22.9067V48C58 50.2091 56.2091 52 54 52H10C7.79086 52 6 50.2091 6 48V16Z" fill="url(#paint0_linear)"/><path d="M6 22.9067H58V48C58 50.2091 56.2091 52 54 52H10C7.79086 52 6 50.2091 6 48V22.9067Z" fill="url(#paint1_linear)"/><defs><linearGradient id="paint0_linear" x1="32" y1="12" x2="32" y2="52" gradientUnits="userSpaceOnUse"><stop stop-color="#55b2ff"/><stop offset="1" stop-color="#0064d2"/></linearGradient><linearGradient id="paint1_linear" x1="32" y1="22.9067" x2="32" y2="52" gradientUnits="userSpaceOnUse"><stop stop-color="#3fa5ff"/><stop offset="1" stop-color="#005ecb"/></linearGradient></defs></svg>`,
+            folder: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradiente del cuerpo base -->
+    <linearGradient id="mac_folder_back" x1="32" y1="8" x2="32" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4BB5FF"/>
+      <stop offset="100%" stop-color="#006CD9"/>
+    </linearGradient>
+
+    <!-- Gradiente de la solapa frontal -->
+    <linearGradient id="mac_folder_front" x1="32" y1="20" x2="32" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3FA8FF"/>
+      <stop offset="40%" stop-color="#1E8CFA"/>
+      <stop offset="100%" stop-color="#0064D2"/>
+    </linearGradient>
+
+    <!-- Brillo del bisel superior -->
+    <linearGradient id="mac_folder_bevel" x1="32" y1="20" x2="32" y2="23" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Sombra suave interior macOS -->
+    <filter id="mac_shadow" x="2" y="16" width="60" height="42" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#002A5E" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Solapa Trasera -->
+  <path d="M6.5 14C6.5 11.5147 8.51472 9.5 11 9.5H23.1716C24.2324 9.5 25.2498 9.92143 26 10.6716L30.5 15.1716C31.2502 15.9218 32.2676 16.3431 33.3284 16.3431H53C55.4853 16.3431 57.5 18.3579 57.5 20.8431V46.5C57.5 48.9853 55.4853 51 53 51H11C8.51472 51 6.5 48.9853 6.5 46.5V14Z" fill="url(#mac_folder_back)"/>
+
+  <!-- Solapa Frontal con Sombra y Bisel -->
+  <g filter="url(#mac_shadow)">
+    <path d="M6 23.5C6 21.0147 8.01472 19 10.5 19H53.5C55.9853 19 58 21.0147 58 23.5V47C58 49.4853 55.9853 51.5 53.5 51.5H10.5C8.01472 51.5 6 49.4853 6 47V23.5Z" fill="url(#mac_folder_front)"/>
+    
+    <!-- Reflejo superior del borde -->
+    <path d="M6 23.5C6 21.0147 8.01472 19 10.5 19H53.5C55.9853 19 58 21.0147 58 23.5V24.5H6V23.5Z" fill="url(#mac_folder_bevel)"/>
+  </g>
+</svg>`,
             audio: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="48" height="48" rx="2" fill="url(#mac_clean_card)" stroke="#c8c8cd" stroke-width="1"/><path d="M40 19.5L29 21.75V37.632C28.459 37.234 27.242 37 26 37C23.791 37 22 38.343 22 40C22 41.657 23.791 43 26 43C28.209 43 30 41.657 30 40V26.5L39 24.682V34.632C38.459 34.234 37.242 34 36 34C33.791 34 32 35.343 32 37C32 38.657 33.791 40 36 40C38.209 40 40 38.657 40 37V19.5Z" fill="#a0a0a5"/><defs><linearGradient id="mac_clean_card" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse"><stop stop-color="#ffffff"/><stop offset="0.7" stop-color="#fafafa"/><stop offset="1" stop-color="#ebebee"/></linearGradient></defs></svg>`,
             zip: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="8" width="44" height="48" rx="8" fill="url(#zip_grad)"/><path d="M22 20H42V44H22V20Z" fill="white" fill-opacity="0.2"/><path d="M32 16V48M20 28H44" stroke="white" stroke-width="4" stroke-linecap="round"/><defs><linearGradient id="zip_grad" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse"><stop stop-color="#ff9500"/><stop offset="1" stop-color="#b86800"/></linearGradient></defs></svg>`,
             back: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="24" fill="#3a3a3c"/><path d="M36 22L24 32L36 42" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -713,11 +750,11 @@
                         fileItem.innerHTML = `<div class="file-icon">${iconSvg}</div><div class="file-name">${displayName}</div>`;
                         
                         fileItem.addEventListener('click', () => {
-                            const directUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${file.path}`;
-                            
-                            if (file.type === 'audio' && !file.name.endsWith('.zip')) {
-                                loadAndPlayAudio(directUrl, displayName);
-                            } else {
+    const directUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${file.path}`;
+    
+    if (file.type === 'audio' && !file.name.endsWith('.zip')) {
+        loadAndPlayAudio(directUrl, displayName);
+    } else {
                                 let downloadName = file.name;
                                 const extensionMatch = file.path.match(/\.[0-9a-z]+$/i);
                                 const fileExtension = extensionMatch ? extensionMatch[0] : '.mp3';
