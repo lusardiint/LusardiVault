@@ -30,6 +30,13 @@ window.vaultShares = {
         "title": "Hola Arval",
         "message": "Aqui si eres artista, te mando un enlace custom donde aparece aqui los beats que yo quiera que aparezcan etc...",
         "accessType": 4, // <--- Importante: 3 entra directo sin pedir correo ni esperar
+        "files": [
+            { 
+                name: "Beat de muestra.mp3", 
+                type: "audio",
+                path: "Shares/Jincho01_92bpm_fmin.mp3" 
+            }
+        ]
     }
 
 };
