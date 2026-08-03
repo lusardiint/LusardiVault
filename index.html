@@ -510,6 +510,180 @@
             font-size: 0.9rem;
         }
 
+        /* ==========================================
+           ESTILOS ESPECÍFICOS PARA MÓVIL
+           ========================================== */
+        @media (max-width: 768px) {
+            /* Pantalla completa nativa sin marco de ventana */
+            #finder-app {
+                width: 100vw;
+                height: 100vh;
+                max-width: 100vw;
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
+                background: var(--bg-color);
+            }
+
+            /* Ocultar barra superior del Finder */
+            .window-header {
+                display: none !important;
+            }
+
+            /* Ocultar barra de Favoritos completamente */
+            .sidebar {
+                display: none !important;
+            }
+
+            /* Estructura vertical del cuerpo */
+            .finder-body {
+                flex-direction: column;
+                height: calc(100vh - 64px); /* Deja espacio exacto para el footer */
+            }
+
+            /* Rejilla de carpetas en vista móvil */
+            .main-content {
+                flex: 1;
+                padding: 16px;
+                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+                gap: 12px;
+            }
+
+            /* Panel de destacados ocupando 1/3 de la pantalla abajo si está visible */
+            .right-sidebar {
+                width: 100%;
+                height: 33vh;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                background: rgba(22, 22, 24, 0.95);
+                backdrop-filter: blur(15px);
+                padding: 16px;
+                box-sizing: border-box;
+            }
+
+            /* Formulario de entrada en móvil */
+            .access-box {
+                max-width: 90vw;
+                padding: 16px;
+            }
+
+            .access-box input {
+                max-width: 100%;
+            }
+
+            /* Adaptación del reproductor inferior */
+            .finder-footer {
+                padding: 0 12px;
+                gap: 8px;
+            }
+
+            .player-info {
+                width: auto;
+                min-width: 0;
+                flex: 1;
+            }
+
+            .track-title-wrapper {
+                width: 100px;
+            }
+
+            audio {
+                max-width: 180px;
+                height: 32px;
+            }
+        }
+
+
+/* ==========================================
+           ESTILOS ESPECÍFICOS PARA MÓVIL
+           ========================================== */
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start;
+                padding: 0;
+            }
+
+            /* Pantalla completa nativa ajustada con 2/10 arriba y 2/10 abajo */
+            #finder-app {
+                width: 100vw;
+                height: 84vh; /* Ocupa el 60% central (6/10) */
+                margin-top: 8vh; /* Margen superior del 20% (2/10) */
+                margin-bottom: 8vh; /* Margen inferior del 20% (2/10) */
+                max-width: 100vw;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                background: var(--bg-color);
+            }
+
+            /* Ocultar barra superior del Finder */
+            .window-header {
+                display: none !important;
+            }
+
+            /* Ocultar barra de Favoritos completamente */
+            .sidebar {
+                display: none !important;
+            }
+
+            /* Estructura vertical del cuerpo */
+            .finder-body {
+                flex-direction: column;
+                height: calc(60vh - 64px); /* Se ajusta a la nueva altura del contenedor */
+            }
+
+            /* Rejilla de carpetas en vista móvil */
+            .main-content {
+                flex: 1;
+                padding: 16px;
+                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+                gap: 12px;
+            }
+
+            /* Panel de destacados si se abre con share */
+            .right-sidebar {
+                width: 100%;
+                height: 33%;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                background: rgba(22, 22, 24, 0.95);
+                backdrop-filter: blur(15px);
+                padding: 16px;
+                box-sizing: border-box;
+            }
+
+            /* Formulario de entrada en móvil */
+            .access-box {
+                max-width: 90vw;
+                padding: 16px;
+            }
+
+            .access-box input {
+                max-width: 100%;
+            }
+
+            /* Adaptación del reproductor inferior */
+            .finder-footer {
+                height: 64px;
+                padding: 0 12px;
+                gap: 8px;
+            }
+
+            .player-info {
+                width: auto;
+                min-width: 0;
+                flex: 1;
+            }
+
+            .track-title-wrapper {
+                width: 100px;
+            }
+
+            audio {
+                max-width: 180px;
+                height: 32px;
+            }
+        }
 
 
     </style>
@@ -542,8 +716,6 @@
             </div>
         </div>
 
-
-
         <div class="finder-body">
             <div class="sidebar">
                 <div class="sidebar-title">Favoritos</div>
@@ -551,13 +723,7 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
                     Beats & Loops
                 </div>
-
-
-
-
             </div>
-
-
 
             <div class="main-content" id="fileGrid">
                 <div class="loading-text" id="loadingText">Cargando directorio...</div>
@@ -744,7 +910,6 @@
                         if(file.type === 'zip') iconSvg = icons.zip;
                         if(file.type === 'folder') iconSvg = icons.folder;
 
-                        // CORRECCIÓN AQUÍ: Limpiamos la extensión para que el panel derecho tampoco la muestre
                         let displayName = file.name;
                         if (file.type === 'audio' || file.type === 'zip') {
                             displayName = file.name.replace(/\.[^/.]+$/, "");
